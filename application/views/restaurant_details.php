@@ -10,20 +10,62 @@
 	<link rel="stylesheet" type="text/css" href="/ci/assets/css/styles.css" />
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 	<script src="/ci/assets/js/cycle.js"></script>
+	<script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
 	<script type="text/javascript">
 		$(document).ready(function(){
 			
-			$('#user_form').submit(function(){
-                var form = $(this);
-                $.post(
-                    form.attr('action'),
-                    form.serialize(),
-                    function(data){
-                        $('#users_list').html(data);
-                    },
-                     'json');
-               return false;
-            });
+			// $(".star_rating li").hover(function()
+			// {
+			// 	var star = $(this);
+
+			// 	$(".star_rating li").each(function(index, value)
+			// 	{
+			// 		if(star.index() >= index)
+			// 		{
+			// 			$(this).addClass("rated");
+			// 		}
+			// 	});
+				
+				$(".star_rating").hover(function()
+				{
+					var star = $(this);
+
+					// console.log(star.find("li"));
+					star.find("li").hover(
+						function(){
+							var lis = $(this);
+							lis.each(
+								function(index, value)
+								{
+									// console.log($(this).index());
+									// console.log(index);
+									if(lis.index() >= index)
+									{
+										$(this).addClass("rated");
+									}
+								});
+						},
+						function()
+						{
+						console.log($(this));
+						$(this).removeClass("rated").siblings("li").removeClass("rated");
+						}
+					);
+				});
+
+			
+
+			// $('#user_form').submit(function(){
+   //              var form = $(this);
+   //              $.post(
+   //                  form.attr('action'),
+   //                  form.serialize(),
+   //                  function(data){
+   //                      $('#users_list').html(data);
+   //                  },
+   //                   'json');
+   //             return false;
+   //          });
 
 		});
 	</script>
@@ -39,38 +81,6 @@
 
 	  		?>
 	  	</div>
-	  	<div class="modal fade" id="rate">
-		  <div class="modal-dialog">
-		    <div class="modal-content">
-		      <div class="modal-header">
-		        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-		        <h4 class="modal-title">360 Restaurant & Lounge</h4>
-		      </div>
-		      <div class="modal-body" id="ratings">
-		        <ul>
-		  			<li>Service: <span class="glyphicon glyphicon-star"></span></li>
-		  			<li>Ambiance: <span class="glyphicon glyphicon-star"></span></li>
-		  			<li>Food Quality: <span class="glyphicon glyphicon-star"></span></li>
-		  			<li>Affordability: <span class="stars glyphicon glyphicon-star"></span></li>
-		  		</ul>
-		      </div>
-		      <div class="modal-footer">
-		        <button type="button" class="btn btn-default float_left" data-dismiss="modal">Close</button>
-		        <form action="" method="post">
-		        	<div class="input-group col-lg-4 float_left">
-					  <span class="input-group-addon required"></span>
-					  <input type="text" class="form-control input-sm" placeholder="Name">
-					</div>
-					<div class="input-group col-lg-4">
-					  <span class="input-group-addon required"></span>
-					  <input type="email" class="form-control input-sm" placeholder="Email">
-					</div>
-					<input class="btn btn-primary" type="submit" name="rating" value="RATE">
-				</form>
-		      </div>
-		    </div><!-- end of modal-content -->
-		  </div><!-- end of modal-dialog -->
-		</div><!-- end of modal -->
 		<h3 class="clear float_left">Reviews</h3>
 	  	<!-- Restaurant detailed page - left restaurant details - rating section -->
 	  	<div id="reviews" class="clear float_left">	

@@ -46,6 +46,14 @@ class Restaurant extends CI_Controller {
 				$this->checked_box[$i] = $this->input->post($i);
 			}
 		}
+
+		// if(empty($this->checked_box))
+		// {
+		// 	$this->checked_box[1] = 1;
+		// 	$this->checked_box[2] = 2;
+		// 	$this->checked_box[3] = 3;
+		// 	$this->checked_box[4] = 4;
+		// }
 		//this sets the variable/array created to session to be avilable in other function (didn't need here because the variable was created outside this function, so it can be accessed through calling $this->variable)
 		$this->session->set_userdata('checked_box', $this->checked_box);
 		$this->html['check'] = $this->checked_box;
@@ -236,7 +244,10 @@ class Restaurant extends CI_Controller {
 					</ul>
 				</div>";
     	}
-    	return $this->html['list'];
+    	// var_dump($this->html);
+    	// die();
+    	return $this->html;
+
 	}
 
 	public function get_restaurant_details()
@@ -263,7 +274,63 @@ class Restaurant extends CI_Controller {
 					<p>{$restaurant['address']}</p>
 					<p>{$restaurant['city']}, {$restaurant['state']}</p>
 					<a data-toggle='modal' href='#rate' class='rate_button btn btn-primary btn-lg'>Rate this restaurant</a>
-					<a class='clear float_left' href=''>{$restaurant['website']}</a>";
+					<a class='clear float_left' href=''>{$restaurant['website']}</a>
+						<div class='modal fade' id='rate'>
+						  <div class='modal-dialog'>
+						    <div class='modal-content'>
+						      <div class='modal-header'>
+						        <button type='button' class='close' data-dismiss='modal' aria-hidden='true'>&times;</button>
+						        <h4 class='modal-title'>{$restaurant['name']}</h4>
+						      </div>
+						      <div class='modal-body' id='ratings'>
+						        <ul>
+						  			<li>Service: <span class='stars'><ul class='star_rating'>
+													<li></li>
+													<li></li>
+													<li></li>
+													<li></li>
+													<li></li>
+												</ul></span></li>
+						  			<li>Ambiance: <span class='stars'><ul class='star_rating'>
+													<li></li>
+													<li></li>
+													<li></li>
+													<li></li>
+													<li></li>
+												</ul></span></li>
+						  			<li>Food Quality: <span class='stars'><ul class='star_rating'>
+													<li></li>
+													<li></li>
+													<li></li>
+													<li></li>
+													<li></li>
+												</ul></span></li>
+						  			<li>Affordability: <span class='stars'><ul class='star_rating'>
+													<li></li>
+													<li></li>
+													<li></li>
+													<li></li>
+													<li></li>
+												</ul></span></li>
+						  		</ul>
+						      </div>
+						      <div class='modal-footer'>
+						        <button type='button' class='btn btn-default float_left' data-dismiss='modal'>Close</button>
+						        <form action='' method='post'>
+						        	<div class='input-group col-lg-4 float_left'>
+									  <span class='input-group-addon required'></span>
+									  <input type='text' class='form-control input-sm' placeholder='Name'>
+									</div>
+									<div class='input-group col-lg-4'>
+									  <span class='input-group-addon required'></span>
+									  <input type='email' class='form-control input-sm' placeholder='Email'>
+									</div>
+									<input class='btn btn-primary' type='submit' name='rating' value='RATE'>
+								</form>
+						      </div>
+						    </div><!-- end of modal-content -->
+						  </div><!-- end of modal-dialog -->
+						</div><!-- end of modal -->";
 			}
 			else
 			{

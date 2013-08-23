@@ -359,8 +359,26 @@
 				text-align: center;
 				color: red;
 			}
+			#wrapper_restaurant #left_details #rate .modal-body #star_rating{
+				list-style: none;
+			}
 			#wrapper_restaurant #left_details #rate .modal-body li{
 				list-style-type: none;
+			}
+
+			#wrapper_restaurant #left_details #rate .modal-body .star_rating li{
+				width: 20px;
+				height: 20px;
+				display:inline-block;
+				background-image: url('../images/blank_star_small.png');
+				background-size: cover;
+				-webkit-background-size: cover;
+				-moz-background-size: cover;
+				background-repeat: no-repeat;
+				cursor: pointer;
+			}
+			#wrapper_restaurant #left_details #rate .modal-body .rated{
+				background-image: url('../images/full_star_small.png') !important;
 			}
 			#wrapper_restaurant #left_details #rate .required{
 				background-image:url('../images/icon-required-field.png');

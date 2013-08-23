@@ -13,6 +13,7 @@
 	<script type="text/javascript">
 		$(document).ready(function(){
 			
+			
 			// $('#user_form').submit(function(){
    //              var form = $(this);
    //              $.post(
@@ -32,7 +33,7 @@
 	<div id="wrapper_list">
 		<div id="left_search" class="float_left">
 			<?php
-		
+
 				if(isset($list['error_message']))
 				{
 					echo "<p>{$error_message}</p>";

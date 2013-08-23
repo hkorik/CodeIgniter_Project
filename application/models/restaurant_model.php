@@ -176,6 +176,11 @@ class Restaurant_model extends CI_Model {
     	return $ratings;
     }
 
+    public function add_ratings($rating_info)
+    {
+    	$this->db->insert('reviews', $rating_info);
+    }
+
     
 }
 /* End of file restaurant_model.php */
