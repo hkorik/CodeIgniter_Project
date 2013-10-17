@@ -2,6 +2,7 @@
 
 class User extends CI_Controller {
 
+	protected $id;
 	protected $page = NULL;
 	protected $user_logged_in;
 	protected $logged_user_info = NULL;
@@ -16,6 +17,12 @@ class User extends CI_Controller {
 	protected $edit_profile_info = NULL;
 	protected $update_success = NULL;
 	protected $user_table = NULL;
+	protected $edit_user_info = NULL;
+	protected $get_user_info = NULL;
+	protected $user_profile_info = NULL;
+	protected $message_info = NULL;
+	protected $comment_info = NULL;
+	protected $profile_info = NULL;
 
 	protected function outside_header()
 	{
@@ -57,7 +64,7 @@ class User extends CI_Controller {
 	public function __construct()
 	{
 		parent::__construct();
-		date_default_timezone_set('America/Los_Angeles');
+		date_default_timezone_set('America/New_York');
 	}
 	
 	public function index()
@@ -100,7 +107,7 @@ class User extends CI_Controller {
 			$this->register_errors['password'] = form_error('password');
 			$this->register_errors['confirm_password'] = form_error('confirm_password');
 			$this->session->set_flashdata('register_errors', $this->register_errors);
-			redirect(base_url('/user/register'));
+			redirect(base_url('/register'));
 		}
 		else
 		{
@@ -115,7 +122,7 @@ class User extends CI_Controller {
 			{
 				$this->register_errors['register_error'] = "Error: Email {$this->user_info['email']} is already in use!";
 				$this->session->set_flashdata('register_errors', $this->register_errors);
-				redirect(base_url('/user/register'));
+				redirect(base_url('/register'));
 			}
 			else
 			{
@@ -126,7 +133,7 @@ class User extends CI_Controller {
 				$this->user_info['last_name'] = $this->input->post('last_name');
 				$this->user_info['email'] = $this->input->post('email');
 				$this->user_info['password'] = $encrypted_password;
-				$this->user_info['created_at'] = date('Y-m-d h:m');
+				$this->user_info['created_at'] = date('Y-m-d H:i:s');
 				//send data to query in model page that will see if this first entry in database
 				$this->load->model('User_model');
 				$this->first_entry = $this->User_model->check_first_entry();
@@ -155,18 +162,18 @@ class User extends CI_Controller {
 				if($this->logged_user_info->user_status != 'admin')
 				{
 					//set the dashboard link to user_dashboard
-					$this->page['dashboard_link'] = "/ci/user/user_dashboard";
+					$this->page['dashboard_link'] = "/ci/dashboard";
 					$this->session->set_userdata('dashboard_link', $this->page['dashboard_link']);
 					//go to user_dashboard function which will login user and display user dashboard info
-					redirect(base_url('/user/user_dashboard'));
+					redirect(base_url('/dashboard'));
 				}
 				else
 				{
 					//set the dashboard link to user_dashboard
-					$this->page['dashboard_link'] = "/ci/user/admin_dashboard";
+					$this->page['dashboard_link'] = "/ci/dashboard/admin";
 					$this->session->set_userdata('dashboard_link', $this->page['dashboard_link']);
 					//go to admin_dashboard function which will login user and display admin dashboard info
-					redirect(base_url('/user/admin_dashboard'));
+					redirect(base_url('/dashboard/admin'));
 				}
 			}
 		}
@@ -183,7 +190,7 @@ class User extends CI_Controller {
 			$this->signin_errors['email'] = form_error('email');
 			$this->signin_errors['password'] = form_error('password');
 			$this->session->set_flashdata('signin_errors', $this->signin_errors);
-			redirect(base_url('/user/signin'));
+			redirect(base_url('/signin'));
 		}
 		else
 		{
@@ -198,7 +205,7 @@ class User extends CI_Controller {
 			{	
 				$this->load->library('encrypt');
 				$decrypted_password = $this->encrypt->decode($this->logged_user_info->password);
-				
+
 				if($this->user_info['password'] === $decrypted_password)
 				{
 					$this->user_logged_in = 'TRUE';
@@ -213,18 +220,18 @@ class User extends CI_Controller {
 					if($this->logged_user_info->user_status != 'admin')
 					{
 						//set the dashboard link to user_dashboard
-						$this->page['dashboard_link'] = "/ci/user/user_dashboard";
+						$this->page['dashboard_link'] = "/ci/dashboard";
 						$this->session->set_userdata('dashboard_link', $this->page['dashboard_link']);
 						//go to user_dashboard function which will login user and display user dashboard info
-						redirect(base_url('/user/user_dashboard'));
+						redirect(base_url('/dashboard'));
 					}
 					else
 					{
 						//set the dashboard link to user_dashboard
-						$this->page['dashboard_link'] = "/ci/user/admin_dashboard";
+						$this->page['dashboard_link'] = "/ci/dashboard/admin";
 						$this->session->set_userdata('dashboard_link', $this->page['dashboard_link']);
 						//go to admin_dashboard function which will login user and display admin dashboard info
-						redirect(base_url('/user/admin_dashboard'));
+						redirect(base_url('/dashboard/admin'));
 					}
 
 				}
@@ -232,14 +239,14 @@ class User extends CI_Controller {
 				{
 					$this->signin_errors['signin_error'] = "Error: The information entered does not match any of our records!";
 					$this->session->set_flashdata('signin_errors', $this->signin_errors);
-					redirect(base_url('/user/signin'));
+					redirect(base_url('/signin'));
 				}				
 			}
 			else
 			{
 				$this->signin_errors['signin_error'] = "Error: The information entered does not match any of our records!";
 				$this->session->set_flashdata('signin_errors', $this->signin_errors);
-				redirect(base_url('/user/signin'));
+				redirect(base_url('/signin'));
 			}
 		}
 	}
@@ -301,7 +308,7 @@ class User extends CI_Controller {
 			$this->register_errors['password'] = form_error('password');
 			$this->register_errors['confirm_password'] = form_error('confirm_password');
 			$this->session->set_flashdata('register_errors', $this->register_errors);
-			redirect(base_url('/user/new_user'));
+			redirect(base_url('/users/new'));
 		}
 		else
 		{
@@ -316,7 +323,7 @@ class User extends CI_Controller {
 			{
 				$this->register_errors['register_error'] = "Error: Email {$this->user_info['email']} is already in use!";
 				$this->session->set_flashdata('register_errors', $this->register_errors);
-				redirect(base_url('/user/new_user'));
+				redirect(base_url('/users/new'));
 			}
 			else
 			{
@@ -327,7 +334,7 @@ class User extends CI_Controller {
 				$this->user_info['last_name'] = $this->input->post('last_name');
 				$this->user_info['email'] = $this->input->post('email');
 				$this->user_info['password'] = $encrypted_password;
-				$this->user_info['created_at'] = date('Y-m-d h:m');
+				$this->user_info['created_at'] = date('Y-m-d H:i:s');
 				//add success message for new user page
 				$this->register_success['message'] = "New user successfully created";
 				$this->session->set_flashdata('register_success', $this->register_success);
@@ -347,7 +354,7 @@ class User extends CI_Controller {
 				$this->load->model('User_model');
 				$this->User_model->register_user($this->user_info);
 				//go to new_user function which will display success message
-				redirect(base_url('/user/new_user'));
+				redirect(base_url('/users/new'));
 			}
 		}
 	}
@@ -356,9 +363,17 @@ class User extends CI_Controller {
 	{
 		$this->user_logged_in = $this->session->userdata('user_logged_in');
 		$this->logged_user_info = $this->session->userdata('logged_user_info');
-
+		
 		if(!empty($this->user_logged_in)  and $this->logged_user_info->user_status != 'normal')
 		{
+			$this->id = $_SERVER['REQUEST_URI'];
+			$this->id = explode("/", $this->id);
+			$this->session->set_userdata('edit_id', $this->id[4]);
+			$this->user_info['email'] = $this->input->post('email');
+			$this->load->model('User_model');
+			$this->edit_user_info = $this->User_model->get_user_info($this->user_info);
+			$this->notifications['edit_users_info'] = $this->edit_user_info;			
+			$this->notifications['update_success'] = $this->session->flashdata('update_success');
 			$this->notifications['edit_errors'] = $this->session->flashdata('edit_errors');
 			$this->page['dashboard_link'] = $this->session->userdata('dashboard_link');
 			$this->page['title'] = "Edit User";
@@ -373,6 +388,7 @@ class User extends CI_Controller {
 
 	public function process_edit_user_info()
 	{
+		$id = $this->session->userdata('edit_id');
 		$this->load->library('form_validation');
 		$this->form_validation->set_rules('first_name', 'First Name', 'alpha|required|xss_clean');
 		$this->form_validation->set_rules('last_name', 'Last Name', 'alpha|required|xss_clean');
@@ -384,16 +400,38 @@ class User extends CI_Controller {
 			$this->edit_errors['last_name'] = form_error('last_name');
 			$this->edit_errors['email'] = form_error('email');
 			$this->session->set_flashdata('edit_errors', $this->edit_errors);
-			redirect(base_url('/user/edit_user'));
+			redirect(base_url('/users/edit/'.$id));
 		}
 		else
 		{
-
+			if($this->input->post('user_level') == 'Admin')
+			{
+				$this->edit_user_info['user_level'] = '9';
+			}
+			else
+			{
+				$this->edit_user_info['user_level'] = '1';
+			}
+			//set user data into variables to send to database
+			$this->edit_user_info['id'] = $this->input->post('id');
+			$this->edit_user_info['first_name'] = $this->input->post('first_name');
+			$this->edit_user_info['last_name'] = $this->input->post('last_name');
+			$this->edit_user_info['email'] = $this->input->post('email');
+			$this->edit_user_info['updated_at'] = date('Y-m-d H:i:s');
+			//add success message for new user page
+			$this->update_success['info_message'] = "Information successfully updated";
+			$this->session->set_flashdata('update_success', $this->update_success);
+			//send data to query in model page that will set data in database
+			$this->load->model('User_model');
+			$this->User_model->update_profile_info($this->edit_user_info);
+			//go to new_user function which will display success message
+			redirect(base_url('/users/edit/'.$id));
 		}
 	}
 
 	public function process_edit_user_pw()
 	{
+		$id = $this->session->userdata('edit_id');
 		$this->load->library('form_validation');
 		$this->form_validation->set_rules('password', 'Password', 'min_length[8]|required|xss_clean');
 		$this->form_validation->set_rules('confirm_password', 'Confirm Password', 'matches[password]|required|xss_clean');
@@ -403,11 +441,25 @@ class User extends CI_Controller {
 			$this->edit_errors['password'] = form_error('password');
 			$this->edit_errors['confirm_password'] = form_error('confirm_password');
 			$this->session->set_flashdata('edit_errors', $this->edit_errors);
-			redirect(base_url('/user/edit_user'));
+			redirect(base_url('/users/edit/'.$id));
 		}
 		else
 		{
-
+			//load library to encrypt password
+			$this->load->library('encrypt');
+			$encrypted_password = $this->encrypt->encode($this->input->post('password'));
+			//set user data into variables to send to database
+			$this->edit_user_info['id'] = $this->input->post('id');
+			$this->edit_user_info['password'] = $encrypted_password;
+			$this->edit_user_info['updated_at'] = date('Y-m-d H:i:s');
+			//add success message for new user page
+			$this->update_success['pw_message'] = "Password successfully updated";
+			$this->session->set_flashdata('update_success', $this->update_success);
+			//send data to query in model page that will set data in database
+			$this->load->model('User_model');
+			$this->User_model->update_profile_info($this->edit_user_info);
+			//go to new_user function which will display success message
+			redirect(base_url('/users/edit/'.$id));
 		}
 	}
 
@@ -433,8 +485,6 @@ class User extends CI_Controller {
 	{
 		$this->load->model('User_model');
 		return $this->User_model->get_users_list();
-		// $this->session->set_userdata('user_table', $this->user_table['user_rows']);
-		// $this->user_dashboard();
 	}
 
 	public function user_profile()
@@ -443,10 +493,158 @@ class User extends CI_Controller {
 
 		if(!empty($this->user_logged_in))
 		{
+			$this->logged_user_info = $this->session->userdata('logged_user_info');
+			$this->notifications['logged_user_id'] = $this->logged_user_info->id;
+			
+			$this->id = $_SERVER['REQUEST_URI'];
+			$this->id = explode("/", $this->id);
+			$this->get_user_info['id'] = $this->id[4];
+			$this->load->model('User_model');
+			$this->user_profile_info = $this->User_model->get_user_profile_info($this->get_user_info);
+
+			$this->notifications['html'] = "";
+			
+			//this get's all the messages for this spacific users profile, and sets to variable to pass to view page
+			$messages = $this->get_messages($this->get_user_info);
+			//get the comments for each of the messages on this users profile - already only has the meeages from this users profile because of the get_message function  
+			foreach($messages as $message) 
+			{
+				$this->notifications['html'] .= "
+								<h4 class='clear float_left'>{$message['first_name']} {$message['last_name']} wrote</h4>
+							    <p class='date float_right'>";
+				
+				$now = date('F jS Y g:i:s A');
+				$date1 = new DateTime($message['created_at']);
+				$date2 = new DateTime($now);
+				$interval = $date1->diff($date2);
+
+				if($interval->d >= 7) 
+				{
+					$thedate = explode(" ", $message['created_at']);
+					$this->notifications['html'] .="{$thedate[0]} {$thedate[1]} {$thedate[2]}";
+				}
+				elseif($interval->d >= 2 and $interval->d < 7)
+				{
+					$this->notifications['html'] .="{$interval->d} days ago";
+				}
+				elseif($interval->d == 1) 
+				{
+					$this->notifications['html'] .="{$interval->d} day ago";
+				}
+				elseif($interval->d == 0 and $interval->h >= 2) 
+				{
+					$this->notifications['html'] .="{$interval->h} hours ago";
+				}
+				elseif($interval->h == 1) 
+				{
+					$this->notifications['html'] .="{$interval->h} hour ago";	
+				}
+				elseif($interval->h < 1 and $interval->i >= 2) 
+				{
+					$this->notifications['html'] .="{$interval->i} minutes ago";
+				}
+				elseif($interval->i == 1)
+				{
+					$this->notifications['html'] .="{$interval->i} minute ago";
+				}
+				elseif($interval->i < 1)
+				{
+					$this->notifications['html'] .="Just now";
+				}
+					
+				$this->notifications['html'] .="</p>
+								<div class='clear' id='message_post'>{$message['message']}<br/><br/></div>
+								<div id='post_comment' class='float_right'>
+								<!-- display comment -->
+								<div class='clear'></div>";
+				
+				$comments = $this->get_comments($message['id']);
+				
+				if(!empty($comments))
+				{				
+					foreach($comments as $comment)
+					{
+						$this->notifications['html'] .= "					
+							<h4 class='float_left'>{$comment['first_name']} {$comment['last_name']} wrote</h4>
+							<p class='date float_right'>";
+							
+						$now = date('F jS Y g:i:s A');
+						$date1 = new DateTime($comment['created_at']);
+						$date2 = new DateTime($now);
+						$interval = $date1->diff($date2);
+
+						if($interval->d >= 7) 
+						{
+							$thedate = explode(" ", $comment['created_at']);
+							$this->notifications['html'] .="{$thedate[0]} {$thedate[1]} {$thedate[2]}";
+						}
+						elseif($interval->d >= 2 and $interval->d < 7)
+						{
+							$this->notifications['html'] .="{$interval->d} days ago";
+						}
+						elseif($interval->d == 1) 
+						{
+							$this->notifications['html'] .="{$interval->d} day ago";
+						}
+						elseif($interval->d == 0 and $interval->h >= 2) 
+						{
+							$this->notifications['html'] .="{$interval->h} hours ago";
+						}
+						elseif($interval->h == 1) 
+						{
+							$this->notifications['html'] .="{$interval->h} hour ago";	
+						}
+						elseif($interval->h < 1 and $interval->i >= 2) 
+						{
+							$this->notifications['html'] .="{$interval->i} minutes ago";
+						}
+						elseif($interval->i == 1)
+						{
+							$this->notifications['html'] .="{$interval->i} minute ago";
+						}
+						elseif($interval->i < 1)
+						{
+							$this->notifications['html'] .="Just now";
+						}
+
+						$this->notifications['html'] .="</p>
+							<div class='clear float_right' id='comment_post'>{$comment['comment']}<br/><br/></div>";
+					}
+				}
+
+				$this->notifications['html'] .= "
+								<!-- post comment -->
+								<form class='clear' action='/ci/user/post_comment' method='post'>
+									<input type='hidden' name='user_id' value='";
+				
+				if(!empty($this->notifications['logged_user_id'])){  
+				
+				$this->notifications['html'] .= "{$this->notifications['logged_user_id']}"; 
+				
+				}
+				
+				$this->notifications['html'] .= "'/>
+									<input type='hidden' name='message_id' value='{$message['id']}' />
+									<input type='hidden' name='profile_user_id' value='";
+				
+				if(!empty($this->user_profile_info)){
+
+				$this->notifications['html'] .= "{$this->user_profile_info->id}";
+
+				}
+				
+				$this->notifications['html'] .= "'/>
+									<textarea class='float_right' name='comment' id='comment' placeholder='Write a comment' rows=3 cols=120></textarea>
+									<input class='clear float_right btn green btn-default' type='submit' value='Post' id='message_button'/>
+								</form>
+						  </div>";
+			}
+			
+			$this->notifications['user_profile_info'] = $this->user_profile_info;
 			$this->page['dashboard_link'] = $this->session->userdata('dashboard_link');
 			$this->page['title'] = "User Information";
 			$this->inside_header();
-			$this->load->view('user_profile.php');
+			$this->load->view('user_profile.php', $this->notifications);
 		}
 		else
 		{
@@ -486,7 +684,7 @@ class User extends CI_Controller {
 			$this->edit_errors['last_name'] = form_error('last_name');
 			$this->edit_errors['email'] = form_error('email');
 			$this->session->set_flashdata('edit_errors', $this->edit_errors);
-			redirect(base_url('/user/edit_profile'));
+			redirect(base_url('/users/edit'));
 		}
 		else
 		{
@@ -496,7 +694,7 @@ class User extends CI_Controller {
 			$this->edit_profile_info['first_name'] = $this->input->post('first_name');
 			$this->edit_profile_info['last_name'] = $this->input->post('last_name');
 			$this->edit_profile_info['email'] = $this->input->post('email');
-			$this->edit_profile_info['updated_at'] = date('Y-m-d h:m');
+			$this->edit_profile_info['updated_at'] = date('Y-m-d H:i:s');
 			//add success message for new user page
 			$this->update_success['info_message'] = "Information successfully updated";
 			$this->session->set_flashdata('update_success', $this->update_success);
@@ -504,7 +702,7 @@ class User extends CI_Controller {
 			$this->load->model('User_model');
 			$this->User_model->update_profile_info($this->edit_profile_info);
 			//go to new_user function which will display success message
-			redirect(base_url('/user/edit_profile'));
+			redirect(base_url('/users/edit'));
 		}
 	}
 
@@ -519,7 +717,7 @@ class User extends CI_Controller {
 			$this->edit_errors['password'] = form_error('password');
 			$this->edit_errors['confirm_password'] = form_error('confirm_password');
 			$this->session->set_flashdata('edit_errors', $this->edit_errors);
-			redirect(base_url('/user/edit_profile'));
+			redirect(base_url('/users/edit'));
 		}
 		else
 		{
@@ -530,15 +728,15 @@ class User extends CI_Controller {
 			//set user data into variables to send to database
 			$this->edit_profile_info['id'] = $this->logged_user_info->id;
 			$this->edit_profile_info['password'] = $encrypted_password;
-			$this->edit_profile_info['updated_at'] = date('Y-m-d h:m');
+			$this->edit_profile_info['updated_at'] = date('Y-m-d H:i:s');
 			//add success message for new user page
-			$this->update_success['pw_message'] = "Information successfully updated";
+			$this->update_success['pw_message'] = "Password successfully updated";
 			$this->session->set_flashdata('update_success', $this->update_success);
 			//send data to query in model page that will set data in database
 			$this->load->model('User_model');
 			$this->User_model->update_profile_info($this->edit_profile_info);
 			//go to new_user function which will display success message
-			redirect(base_url('/user/edit_profile'));
+			redirect(base_url('/users/edit'));
 		}
 	}
 
@@ -551,7 +749,7 @@ class User extends CI_Controller {
 		{
 			$this->edit_errors['description'] = form_error('description');
 			$this->session->set_flashdata('edit_errors', $this->edit_errors);
-			redirect(base_url('/user/edit_profile'));
+			redirect(base_url('/users/edit'));
 		}
 		else
 		{
@@ -559,7 +757,7 @@ class User extends CI_Controller {
 			//set user data into variables to send to database
 			$this->edit_profile_info['id'] = $this->logged_user_info->id;
 			$this->edit_profile_info['description'] = $this->input->post('description');
-			$this->edit_profile_info['updated_at'] = date('Y-m-d h:m');
+			$this->edit_profile_info['updated_at'] = date('Y-m-d H:i:s');
 			//add success message for new user page
 			$this->update_success['description_message'] = "Information successfully updated";
 			$this->session->set_flashdata('update_success', $this->update_success);
@@ -567,8 +765,59 @@ class User extends CI_Controller {
 			$this->load->model('User_model');
 			$this->User_model->update_profile_info($this->edit_profile_info);
 			//go to new_user function which will display success message
-			redirect(base_url('/user/edit_profile'));
+			redirect(base_url('/users/edit'));
 		}
+	}
+
+	public function post_message()
+	{		
+		$this->message_info['user_id'] = $this->input->post('user_id');
+		$this->message_info['profile_user_id'] = $this->input->post('profile_user_id');
+		$this->message_info['message'] = $this->input->post('message');
+		$this->message_info['created_at'] = date('Y-m-d H:i:s');
+
+		$this->load->model('User_model');
+		$this->User_model->post_message($this->message_info);
+		
+		$current_id = $this->input->post('profile_user_id');
+		redirect(base_url('/users/show/'. $current_id));
+	}
+
+	public function post_comment()
+	{
+		$current_id = $this->input->post('profile_user_id');
+		
+		$this->comment_info['user_id'] = $this->input->post('user_id');
+		$this->comment_info['message_id'] = $this->input->post('message_id');
+		$this->comment_info['comment'] = $this->input->post('comment');
+		$this->comment_info['created_at'] = date('Y-m-d H:i:s');
+
+		$this->load->model('User_model');
+		$this->User_model->post_comment($this->comment_info);
+		
+		redirect(base_url('/users/show/'. $current_id));
+	}
+
+	public function get_messages($user_info)
+	{
+		$this->profile_info['profile_user_id'] = $user_info['id'];
+		$this->load->model('User_model');
+		return $this->User_model->get_messages($this->profile_info);	
+	}
+
+	public function get_comments($messages_info)
+	{
+		$this->profile_info['message_id'] = $messages_info;
+		$this->load->model('User_model');
+		return $this->User_model->get_comments($this->profile_info);
+	}
+
+	public function delete_user()
+	{
+		$this->user_info['email'] = $this->input->post('email');
+		$this->load->model('User_model');
+		$this->User_model->delete_user($this->user_info);
+		redirect(base_url('/dashboard/admin'));
 	}
 
 	public function log_off()

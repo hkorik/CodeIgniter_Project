@@ -16,7 +16,7 @@
 			    <input class="btn green btn-default float_right" type="submit" value="Sign In">
 			  </fieldset>
 			</form>
-			<a class="float_right" href="/ci/user/register">Don't have an account? Register.</a>
+			<a class="float_right" href="/ci/register">Don't have an account? Register.</a>
 		</div>	
 	</div>
 </body>

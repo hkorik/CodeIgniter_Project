@@ -1,7 +1,7 @@
 		<div class="jumbotron">
 		  <h1>Welcome to the test</h1>
 		  <p>We're going to build a cool application using MVC framework! This application was built with the Village88 folks!</p>
-		  <p><a class="btn blue btn-primary btn-large">Start</a></p>
+		  <p><a href="/ci/register" class="btn blue btn-primary btn-large">Start</a></p>
 		</div>
 		<div class="row">
 		    <div class="col-lg-4">

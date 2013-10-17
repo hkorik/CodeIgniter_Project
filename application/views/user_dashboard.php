@@ -4,9 +4,9 @@
 			<thead class="dark_grey">
 				<th>ID</th>
 				<th>Name</th>
-				<th>email</th>
-				<th>created_at</th>
-				<th>user_level</th>
+				<th>Email</th>
+				<th>Created At</th>
+				<th>User Level</th>
 			</thead>
 			<tbody>
 				<?php
@@ -16,9 +16,9 @@
 						echo "<tr>";
 
 						echo "<td>{$row['id']}</td>";
-						echo "<td>{$row['first_name']} {$row['last_name']}</td>";
+						echo "<td><a href='/ci/user/user_profile/?={$row['id']}'>{$row['first_name']} {$row['last_name']}</a></td>";
 						echo "<td>{$row['email']}</td>";
-						echo "<td>{$row['created_at']}</td>";
+						echo "<td>{$row['created_at_date']}</td>";
 						if($row['user_level'] != '9')
 						{
 							$row['user_level'] = 'normal';

@@ -38,9 +38,15 @@
 |
 */
 
-$route['default_controller'] = "restaurant";
+$route['default_controller'] = "user";
 $route['404_override'] = '';
-
-
+$route['signin'] = "user/signin";
+$route['register'] = "user/register";
+$route['dashboard'] = "user/user_dashboard";
+$route['dashboard/admin'] = "user/admin_dashboard";
+$route['users/new'] = "user/new_user";
+$route['users/edit'] = "user/edit_profile";
+$route['users/show/(:num)'] = "user/user_profile/$1";
+$route['users/edit/(:num)'] = "user/edit_user/$1";
 /* End of file routes.php */
 /* Location: ./application/config/routes.php */

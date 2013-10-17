@@ -1,14 +1,14 @@
 	<div id="admin_dashboard">
 		<h3 class="float_left">Manage Users</h3>
-		<a class="btn blue btn-default float_right" href="/ci/user/new_user">Add new</a>
+		<a class="btn blue btn-default float_right" href="/ci/users/new">Add new</a>
 		<table class="table table-striped table-bordered">
 			<thead class="dark_grey">
 				<th>ID</th>
 				<th>Name</th>
-				<th>email</th>
-				<th>created_at</th>
-				<th>user_level</th>
-				<th>actions</th>
+				<th>Email</th>
+				<th>Created At</th>
+				<th>User Level</th>
+				<th>Actions</th>
 			</thead>
 			<tbody>
 				<?php
@@ -18,9 +18,9 @@
 						echo "<tr>";
 
 							echo "<td>{$row['id']}</td>";
-							echo "<td>{$row['first_name']} {$row['last_name']}</td>";
+							echo "<td><a href='/ci/users/show/{$row['id']}'>{$row['first_name']} {$row['last_name']}</a></td>";
 							echo "<td>{$row['email']}</td>";
-							echo "<td>{$row['created_at']}</td>";
+							echo "<td>{$row['created_at_date']}</td>";
 							if($row['user_level'] != '9')
 							{
 								$row['user_level'] = 'normal';
@@ -31,8 +31,17 @@
 								$row['user_level'] = 'admin';
 								echo "<td>{$row['user_level']}</td>";
 							}
-							echo "<td class='last_td'><a href='/ci/user/edit_user'>edit</a><a href=''>remove</a></td>";
-
+							echo "<td class='last_td'>
+									<form class='float_left' action='/ci/users/edit/{$row['id']}' method='post'>
+										<input type='hidden' name='email' value='{$row['email']}'/>
+										<input class='btn btn-success' type='submit' value='Edit' />
+									</form>
+									<form class='delete' action='/ci/user/delete_user' method='post'>
+										<input type='hidden' name='email' value='{$row['email']}'/>
+										<input type='hidden' name='name' value='{$row['first_name']} {$row['last_name']}' />
+										<input class='btn btn-danger' type='submit' value='Delete' />
+									</form>
+								  </td>";
 						echo "</tr>";
 					}
 

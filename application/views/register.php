@@ -31,7 +31,7 @@
 			    <input class="btn green btn-default float_right" type="submit" value="Register">
 			  </fieldset>
 			</form>
-			<a class="float_right" href="/ci/user/signin">Already have an account? Login.</a>
+			<a class="float_right" href="/ci/signin">Already have an account? Login.</a>
 		</div>	
 	</div>
 </body>
