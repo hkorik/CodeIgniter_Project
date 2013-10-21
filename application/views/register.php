@@ -1,31 +1,31 @@
 		<div class="outside_form">	
 			<h2>Register</h2>
-			<form action="/ci/user/process_registration" method="post">
+			<form id="register_form" action="/ci/user/process_registration" method="post">
 			  <fieldset>
-			    <div class="form-group<?php if(!empty($register_errors['email'])) echo ' field_block'; ?>">
-			      <?php if(!empty($register_errors['register_error'])){ echo "<p>{$register_errors['register_error']}</p>"; } ?>	
+			    <div class="form-group field_block_text">
+			      <p class="prev_message" id='messages_register_error'></p>	
 			      <label for="email">Email address:</label>
-			      <?php if(!empty($register_errors['email'])){ echo $register_errors['email']; } ?>
+			      <p class="prev_message" id='messages_email'></p>
 			      <input type="text" class="form-control" name="email" id="email" placeholder="Enter email">
 			    </div>
-		        <div class="form-group<?php if(!empty($register_errors['first_name'])) echo ' field_block'; ?>">
+		        <div class="form-group">
 			      <label for="first_name">First Name:</label>
-			      <?php if(!empty($register_errors['first_name'])){ echo "{$register_errors['first_name']}"; } ?>
+			      <p class="prev_message" id='messages_first_name'></p>
 			      <input type="text" class="form-control" name="first_name" id="first_name" placeholder="Enter First Name">
 			    </div>
-		        <div class="form-group<?php if(!empty($register_errors['last_name'])) echo ' field_block'; ?>">
+		        <div class="form-group">
 			      <label for="last_name">Last Name:</label>
-			      <?php if(!empty($register_errors['last_name'])){ echo "{$register_errors['last_name']}"; } ?>
+			      <p class="prev_message" id='messages_last_name'></p>
 			      <input type="text" class="form-control" name="last_name" id="last_name" placeholder="Enter Last Name">
 			    </div>
-			    <div class="form-group<?php if(!empty($register_errors['password'])) echo ' field_block'; ?>">
+			    <div class="form-group">
 			      <label for="password">Password:</label>
-			      <?php if(!empty($register_errors['password'])){ echo "{$register_errors['password']}"; } ?>
+			      <p class="prev_message" id='messages_password'></p>
 			      <input type="password" class="form-control" name="password" id="password" placeholder="Enter Password">
 			    </div>
-		        <div class="form-group<?php if(!empty($register_errors['confirm_password'])) echo ' field_block'; ?>">
+		        <div class="form-group">
 			      <label for="confirm_password">Password Confirmation:</label>
-			      <?php if(!empty($register_errors['confirm_password'])){ echo "{$register_errors['confirm_password']}"; } ?>
+			      <p class="prev_message" id='messages_confirm_password'></p>
 			      <input type="password" class="form-control" name="confirm_password" id="confirm_password" placeholder="Enter Password Confirmation">
 			    </div>
 			    <input class="btn green btn-default float_right" type="submit" value="Register">

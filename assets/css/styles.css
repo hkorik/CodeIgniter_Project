@@ -49,6 +49,9 @@
 	.success_message{
 		color: green;
 	}
+	#success_message p{
+		color: green;
+	}
 	.field_block p{ 
 		color: red; 
 	}
@@ -62,6 +65,9 @@
 		border:1px solid red;
 		width:260px;
 		margin-bottom:5px;
+	}
+	.field_block_text p{ 
+		color: red; 
 	}
 	/* Outside form page */
 	#wrapper .outside_form{

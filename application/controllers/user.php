@@ -107,7 +107,7 @@ class User extends CI_Controller {
 			$this->register_errors['password'] = form_error('password');
 			$this->register_errors['confirm_password'] = form_error('confirm_password');
 			$this->session->set_flashdata('register_errors', $this->register_errors);
-			redirect(base_url('/register'));
+			echo json_encode($this->register_errors);
 		}
 		else
 		{
@@ -122,7 +122,7 @@ class User extends CI_Controller {
 			{
 				$this->register_errors['register_error'] = "Error: Email {$this->user_info['email']} is already in use!";
 				$this->session->set_flashdata('register_errors', $this->register_errors);
-				redirect(base_url('/register'));
+				echo json_encode($this->register_errors);
 			}
 			else
 			{
@@ -165,7 +165,8 @@ class User extends CI_Controller {
 					$this->page['dashboard_link'] = "/ci/dashboard";
 					$this->session->set_userdata('dashboard_link', $this->page['dashboard_link']);
 					//go to user_dashboard function which will login user and display user dashboard info
-					redirect(base_url('/dashboard'));
+					$dashboard_link['link'] = 'dashboard';
+					echo json_encode($dashboard_link);
 				}
 				else
 				{
@@ -173,7 +174,8 @@ class User extends CI_Controller {
 					$this->page['dashboard_link'] = "/ci/dashboard/admin";
 					$this->session->set_userdata('dashboard_link', $this->page['dashboard_link']);
 					//go to admin_dashboard function which will login user and display admin dashboard info
-					redirect(base_url('/dashboard/admin'));
+					$dashboard_link['link'] = 'dashboard/admin';
+					echo json_encode($dashboard_link);
 				}
 			}
 		}
@@ -190,7 +192,7 @@ class User extends CI_Controller {
 			$this->signin_errors['email'] = form_error('email');
 			$this->signin_errors['password'] = form_error('password');
 			$this->session->set_flashdata('signin_errors', $this->signin_errors);
-			redirect(base_url('/signin'));
+			echo json_encode($this->signin_errors);
 		}
 		else
 		{
@@ -223,7 +225,8 @@ class User extends CI_Controller {
 						$this->page['dashboard_link'] = "/ci/dashboard";
 						$this->session->set_userdata('dashboard_link', $this->page['dashboard_link']);
 						//go to user_dashboard function which will login user and display user dashboard info
-						redirect(base_url('/dashboard'));
+						$dashboard_link['link'] = 'dashboard';
+						echo json_encode($dashboard_link);
 					}
 					else
 					{
@@ -231,7 +234,8 @@ class User extends CI_Controller {
 						$this->page['dashboard_link'] = "/ci/dashboard/admin";
 						$this->session->set_userdata('dashboard_link', $this->page['dashboard_link']);
 						//go to admin_dashboard function which will login user and display admin dashboard info
-						redirect(base_url('/dashboard/admin'));
+						$dashboard_link['link'] = 'dashboard/admin';
+						echo json_encode($dashboard_link);
 					}
 
 				}
@@ -239,14 +243,16 @@ class User extends CI_Controller {
 				{
 					$this->signin_errors['signin_error'] = "Error: The information entered does not match any of our records!";
 					$this->session->set_flashdata('signin_errors', $this->signin_errors);
-					redirect(base_url('/signin'));
+					echo json_encode($this->signin_errors);
+
 				}				
 			}
 			else
 			{
 				$this->signin_errors['signin_error'] = "Error: The information entered does not match any of our records!";
 				$this->session->set_flashdata('signin_errors', $this->signin_errors);
-				redirect(base_url('/signin'));
+				echo json_encode($this->signin_errors);
+
 			}
 		}
 	}
@@ -308,7 +314,7 @@ class User extends CI_Controller {
 			$this->register_errors['password'] = form_error('password');
 			$this->register_errors['confirm_password'] = form_error('confirm_password');
 			$this->session->set_flashdata('register_errors', $this->register_errors);
-			redirect(base_url('/users/new'));
+			echo json_encode($this->register_errors);
 		}
 		else
 		{
@@ -323,7 +329,7 @@ class User extends CI_Controller {
 			{
 				$this->register_errors['register_error'] = "Error: Email {$this->user_info['email']} is already in use!";
 				$this->session->set_flashdata('register_errors', $this->register_errors);
-				redirect(base_url('/users/new'));
+				echo json_encode($this->register_errors);
 			}
 			else
 			{
@@ -354,7 +360,7 @@ class User extends CI_Controller {
 				$this->load->model('User_model');
 				$this->User_model->register_user($this->user_info);
 				//go to new_user function which will display success message
-				redirect(base_url('/users/new'));
+				echo json_encode($this->register_success);
 			}
 		}
 	}
@@ -388,7 +394,7 @@ class User extends CI_Controller {
 
 	public function process_edit_user_info()
 	{
-		$id = $this->session->userdata('edit_id');
+		$id['id'] = $this->session->userdata('edit_id');
 		$this->load->library('form_validation');
 		$this->form_validation->set_rules('first_name', 'First Name', 'alpha|required|xss_clean');
 		$this->form_validation->set_rules('last_name', 'Last Name', 'alpha|required|xss_clean');
@@ -400,32 +406,50 @@ class User extends CI_Controller {
 			$this->edit_errors['last_name'] = form_error('last_name');
 			$this->edit_errors['email'] = form_error('email');
 			$this->session->set_flashdata('edit_errors', $this->edit_errors);
-			redirect(base_url('/users/edit/'.$id));
+			echo json_encode($this->edit_errors);
 		}
 		else
 		{
-			if($this->input->post('user_level') == 'Admin')
+			//get current edit user info - to be able to allow admin to select users existing own email and only not allow to select other already existent emails.
+			$this->load->model('User_model');
+			$users_edit_info = $this->User_model->get_user_profile_info($id);			
+			//take email and check if user exists
+			$this->user_info['email'] = $this->input->post('email');
+			//send data to query in model page that will see if this entry exists in database
+			$this->user_exists = $this->User_model->check_user_exist($this->user_info);
+
+			// if someone has that email address and that email address is not the one of the person we are editing
+			if($this->user_exists != NULL and $this->user_exists->email != $users_edit_info->email)
 			{
-				$this->edit_user_info['user_level'] = '9';
+					$this->register_errors['register_error'] = "Error: Email {$this->user_info['email']} is already in use!";
+					$this->session->set_flashdata('register_errors', $this->register_errors);
+					echo json_encode($this->register_errors);
 			}
 			else
 			{
-				$this->edit_user_info['user_level'] = '1';
+				if($this->input->post('user_level') == 'Admin')
+				{
+					$this->edit_user_info['user_level'] = '9';
+				}
+				else
+				{
+					$this->edit_user_info['user_level'] = '1';
+				}
+				//set user data into variables to send to database
+				$this->edit_user_info['id'] = $this->input->post('id');
+				$this->edit_user_info['first_name'] = $this->input->post('first_name');
+				$this->edit_user_info['last_name'] = $this->input->post('last_name');
+				$this->edit_user_info['email'] = $this->input->post('email');
+				$this->edit_user_info['updated_at'] = date('Y-m-d H:i:s');
+				//add success message for new user page
+				$this->update_success['info_message'] = "Information successfully updated";
+				$this->session->set_flashdata('update_success', $this->update_success);
+				//send data to query in model page that will set data in database
+				$this->load->model('User_model');
+				$this->User_model->update_profile_info($this->edit_user_info);
+				//go to new_user function which will display success message
+				echo json_encode($this->update_success);
 			}
-			//set user data into variables to send to database
-			$this->edit_user_info['id'] = $this->input->post('id');
-			$this->edit_user_info['first_name'] = $this->input->post('first_name');
-			$this->edit_user_info['last_name'] = $this->input->post('last_name');
-			$this->edit_user_info['email'] = $this->input->post('email');
-			$this->edit_user_info['updated_at'] = date('Y-m-d H:i:s');
-			//add success message for new user page
-			$this->update_success['info_message'] = "Information successfully updated";
-			$this->session->set_flashdata('update_success', $this->update_success);
-			//send data to query in model page that will set data in database
-			$this->load->model('User_model');
-			$this->User_model->update_profile_info($this->edit_user_info);
-			//go to new_user function which will display success message
-			redirect(base_url('/users/edit/'.$id));
 		}
 	}
 
@@ -441,7 +465,7 @@ class User extends CI_Controller {
 			$this->edit_errors['password'] = form_error('password');
 			$this->edit_errors['confirm_password'] = form_error('confirm_password');
 			$this->session->set_flashdata('edit_errors', $this->edit_errors);
-			redirect(base_url('/users/edit/'.$id));
+			echo json_encode($this->edit_errors);
 		}
 		else
 		{
@@ -459,7 +483,7 @@ class User extends CI_Controller {
 			$this->load->model('User_model');
 			$this->User_model->update_profile_info($this->edit_user_info);
 			//go to new_user function which will display success message
-			redirect(base_url('/users/edit/'.$id));
+			echo json_encode($this->update_success);
 		}
 	}
 
@@ -684,25 +708,45 @@ class User extends CI_Controller {
 			$this->edit_errors['last_name'] = form_error('last_name');
 			$this->edit_errors['email'] = form_error('email');
 			$this->session->set_flashdata('edit_errors', $this->edit_errors);
-			redirect(base_url('/users/edit'));
+			echo json_encode($this->edit_errors);
 		}
 		else
 		{
+			//get logged in user info - to be able to allow user to select own email and only not allow to select other already existent emails.
 			$this->logged_user_info = $this->session->userdata('logged_user_info');
-			//set user data into variables to send to database
-			$this->edit_profile_info['id'] = $this->logged_user_info->id;
-			$this->edit_profile_info['first_name'] = $this->input->post('first_name');
-			$this->edit_profile_info['last_name'] = $this->input->post('last_name');
-			$this->edit_profile_info['email'] = $this->input->post('email');
-			$this->edit_profile_info['updated_at'] = date('Y-m-d H:i:s');
-			//add success message for new user page
-			$this->update_success['info_message'] = "Information successfully updated";
-			$this->session->set_flashdata('update_success', $this->update_success);
-			//send data to query in model page that will set data in database
+			//take email and check if user exists
+			$this->user_info['email'] = $this->input->post('email');
+			//send data to query in model page that will see if this entry exists in database
 			$this->load->model('User_model');
-			$this->User_model->update_profile_info($this->edit_profile_info);
-			//go to new_user function which will display success message
-			redirect(base_url('/users/edit'));
+			$this->user_exists = $this->User_model->check_user_exist($this->user_info);
+
+			// if someone has that email address and the email is not their own (i.e. the person that is logged in and trying to edit his own profile)
+			if($this->user_exists != NULL and $this->user_exists->email != $this->logged_user_info->email)
+			{
+				// if($this->user_exists->email != $this->logged_user_info->email)
+				// {
+					$this->register_errors['register_error'] = "Error: Email {$this->user_info['email']} is already in use!";
+					$this->session->set_flashdata('register_errors', $this->register_errors);
+					echo json_encode($this->register_errors);
+			}
+			else
+			{
+				$this->logged_user_info = $this->session->userdata('logged_user_info');
+				//set user data into variables to send to database
+				$this->edit_profile_info['id'] = $this->logged_user_info->id;
+				$this->edit_profile_info['first_name'] = $this->input->post('first_name');
+				$this->edit_profile_info['last_name'] = $this->input->post('last_name');
+				$this->edit_profile_info['email'] = $this->input->post('email');
+				$this->edit_profile_info['updated_at'] = date('Y-m-d H:i:s');
+				//add success message for new user page
+				$this->update_success['info_message'] = "Information successfully updated";
+				$this->session->set_flashdata('update_success', $this->update_success);
+				//send data to query in model page that will set data in database
+				$this->load->model('User_model');
+				$this->User_model->update_profile_info($this->edit_profile_info);
+				//go to new_user function which will display success message
+				echo json_encode($this->update_success);
+			}
 		}
 	}
 
@@ -717,7 +761,7 @@ class User extends CI_Controller {
 			$this->edit_errors['password'] = form_error('password');
 			$this->edit_errors['confirm_password'] = form_error('confirm_password');
 			$this->session->set_flashdata('edit_errors', $this->edit_errors);
-			redirect(base_url('/users/edit'));
+			echo json_encode($this->edit_errors);
 		}
 		else
 		{
@@ -736,7 +780,7 @@ class User extends CI_Controller {
 			$this->load->model('User_model');
 			$this->User_model->update_profile_info($this->edit_profile_info);
 			//go to new_user function which will display success message
-			redirect(base_url('/users/edit'));
+			echo json_encode($this->update_success);
 		}
 	}
 
@@ -749,7 +793,7 @@ class User extends CI_Controller {
 		{
 			$this->edit_errors['description'] = form_error('description');
 			$this->session->set_flashdata('edit_errors', $this->edit_errors);
-			redirect(base_url('/users/edit'));
+			echo json_encode($this->edit_errors);
 		}
 		else
 		{
@@ -765,7 +809,7 @@ class User extends CI_Controller {
 			$this->load->model('User_model');
 			$this->User_model->update_profile_info($this->edit_profile_info);
 			//go to new_user function which will display success message
-			redirect(base_url('/users/edit'));
+			echo json_encode($this->update_success);
 		}
 	}
 

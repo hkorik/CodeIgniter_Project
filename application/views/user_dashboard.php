@@ -16,7 +16,7 @@
 						echo "<tr>";
 
 						echo "<td>{$row['id']}</td>";
-						echo "<td><a href='/ci/user/user_profile/?={$row['id']}'>{$row['first_name']} {$row['last_name']}</a></td>";
+						echo "<td><a href='/ci/users/show/{$row['id']}'>{$row['first_name']} {$row['last_name']}</a></td>";
 						echo "<td>{$row['email']}</td>";
 						echo "<td>{$row['created_at_date']}</td>";
 						if($row['user_level'] != '9')
